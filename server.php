@@ -1,5 +1,9 @@
 <?php
 
+if (php_sapi_name() !== 'cli') {
+	exit;
+}
+
 require __DIR__ . '/vendor/autoload.php';
 
 
@@ -17,21 +21,22 @@ socket_listen($sock, 5);
 dump("Server listening on $address:$port...\n");
 do {
 	$client = socket_accept($sock);
+	$client_id = spl_object_id($client);
 	if ($client === false) {
 		dump(socket_strerror(socket_last_error($sock)));
 		continue;
 	}
-	$input = socket_read($client, 1024);
-	if ($input === false) {
-
-		dump(socket_strerror(socket_last_error($client)));
-		socket_close($client);
-		continue;
-	}
-	dump($input);
-
-	$input = socket_write($client, "Messege was send succesfuly to $sock_id");
-
+	do {
+		$input = socket_read($client, 1024);
+		if ($input === false || trim($input) === '') {
+			break;
+		}
+		dump($input);
+		$output = socket_write($client, "Message was sent successfully from $client_id to $sock_id");
+		if ($output === false) {
+			break;
+		}
+	} while (true);
 	socket_close($client);
 } while (true);
 

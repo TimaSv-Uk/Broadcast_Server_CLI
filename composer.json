@@ -1,6 +1,7 @@
 {
     "require": {
-        "league/climate": "^3.10"
+        "league/climate": "^3.10",
+        "laravel/framework": "^12.2"
     },
     "require-dev": {
         "symfony/var-dumper": "^7.2"
